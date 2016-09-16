@@ -1,6 +1,6 @@
 # CGI_server-ProcessPool
-	该项目是使用进程池实现一个并发的CGI服务器。		
-		
+						
+	该项目是使用进程池实现一个并发的CGI服务器。				
 
 	为演示CGI工作原理，使用dup函数实现一个基本的CGI服务器，先关闭标准输出文件符STDOUT_FILENO（值为1),＜/br＞
 然后复制socket文件描述符connfd。因为dup总是返回系统中最小的可用文件描述符，所以返回值实际上是1,就是之前关闭＜/br＞
