@@ -317,6 +317,7 @@ void processpool< T >::run_child()
     delete [] users;
     users = NULL;
     close( pipefd );
+    /*应该由创建该文件描述符的人删除*/
     //close( m_listenfd );
     close( m_epollfd );
 }
@@ -326,6 +327,7 @@ void processpool< T >::run_parent()
 {
     setup_sig_pipe();
 
+    /*父进程监听m_listenfd*/
     addfd( m_epollfd, m_listenfd );
 
     epoll_event events[ MAX_EVENT_NUMBER ];
@@ -348,6 +350,8 @@ void processpool< T >::run_parent()
             int sockfd = events[i].data.fd;
             if( sockfd == m_listenfd )
             {
+                /*如果有新连接到来。
+                 * 采用Round Robin方式将其分配给一个子进程处理*/
                 int i =  sub_process_counter;
                 do
                 {
@@ -370,6 +374,7 @@ void processpool< T >::run_parent()
                 printf( "send request to child %d\n", i );
                 //sub_process_counter %= m_process_number;
             }
+            /*下面处理父进程接收到的信号*/
             else if( ( sockfd == sig_pipefd[0] ) && ( events[i].events & EPOLLIN ) )
             {
                 int sig;
@@ -385,6 +390,7 @@ void processpool< T >::run_parent()
                     {
                         switch( signals[i] )
                         {
+                            /*该信号为子进程状态发生变化（退出或暂停）*/
                             case SIGCHLD:
                             {
                                 pid_t pid;
@@ -393,6 +399,9 @@ void processpool< T >::run_parent()
                                 {
                                     for( int i = 0; i < m_process_number; ++i )
                                     {
+                                        /*如果进程池中第i个子进程退出了，则主进程关闭
+                                         * 相应的通讯管道，并设置相应的m_pid为-1,以标
+                                         * 记该子进程已经退出*/
                                         if( m_sub_process[i].m_pid == pid )
                                         {
                                             printf( "child %d join\n", i );
@@ -411,7 +420,9 @@ void processpool< T >::run_parent()
                                 }
                                 break;
                             }
+                            /*终止进程。kill命令默认发送的信号*/
                             case SIGTERM:
+                            /*键盘输入以中断进程（Ctrl+C）*/
                             case SIGINT:
                             {
                                 printf( "kill all the clild now\n" );
@@ -440,6 +451,7 @@ void processpool< T >::run_parent()
         }
     }
 
+    /*应该由创建者关闭这个文件描述符*/
     //close( m_listenfd );
     close( m_epollfd );
 }
