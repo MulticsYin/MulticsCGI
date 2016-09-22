@@ -1,3 +1,6 @@
+/*有时我们希望把标准输入重定向到一个文件，或者把标准输出定向到一个网络连接
+ * 典型的就是CGI编程。
+ * 该文件利用dup函数实现一个基本的CGI服务器。*/
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
