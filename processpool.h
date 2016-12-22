@@ -53,7 +53,7 @@ public:
         }
         return m_instance;
     }
-    ~processpool()
+    virtual  ~processpool()
     {
         delete [] m_sub_process;
     }
