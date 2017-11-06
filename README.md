@@ -11,9 +11,8 @@
 * passfd.cpp描述在进程间传递文件描述符。  
 
 参考：  
-* CGI简介:https://en.wikipedia.org/wiki/CGI  		
-http://baike.baidu.com/item/CGI/607810			
-*《Linux高性能服务器编程》		
-*《UNIX环境高级编程》
+* [CGI简介](https://en.wikipedia.org/wiki/CGI)
+* 《Linux高性能服务器编程》		
+* 《UNIX环境高级编程》
 * 《UNIX网络编程》
 * 《TCP/IP详解》		
